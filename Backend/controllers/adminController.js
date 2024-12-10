@@ -9,7 +9,7 @@ import jwt from "jsonwebtoken"
 const addDoctor = async(req,res) => {
     try {
         // console.log(req.body);
-        const { name, email, password, speciality, about, degree, fees, experience, address} = req.body;
+        const { name, email, password,available, speciality, about, degree, fees, experience, address} = req.body;
         const imageFile = req.file;
         console.log({ name, email, password, speciality, about, degree, fees, experience, address},imageFile);
 
@@ -39,6 +39,7 @@ const addDoctor = async(req,res) => {
             email,
             password:hashedPassword,
             image:imageUrl,
+            available,
             speciality,
             degree,
             experience,
