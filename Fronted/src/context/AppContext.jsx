@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react-refresh/only-export-components */
 import { createContext } from "react";
 import axios from "axios"
 import {toast} from "react-toastify"
@@ -9,10 +11,11 @@ export const AppContext = createContext();
 const AppcontextProvider = (props) => {
   const [doctors, setDoctors] = useState([])
 
-  const [token, setToken] = useState("")
+  const [token, setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):false)
 
   const currencySymbol = '$'
   const backendUrl = import.meta.env.VITE_BACKEND_URL
+  // console.log(backendUrl);
 
   const getDoctorsData = async() => {
     try {
@@ -36,6 +39,7 @@ const AppcontextProvider = (props) => {
 
   useEffect(() => {
     getDoctorsData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   return (
