@@ -39,26 +39,36 @@ export const Myprofile = () => {
       }
   }
 
+  if (!userData) return <p>Loading profile...</p>;
+
   return userData && (
     <div className="max-w-lg flex flex-col gap-2 text-sm">
+    {isEdit ? (
+      <label htmlFor="image">
+        <div className="inline-block relative cursor-pointer">
+          <img
+            className="w-36 rounded opacity-75"
+            src={image ? URL.createObjectURL(image) : userData.image}
+            alt=""
+          />
+          <img className="absolute w-10 right-12 bottom-12" src={image ? "" : assets.upload_icon} alt="" />
+        </div>
+        <input onChange={(e) => setImage(e.target.files[0])} type="file" id="image" hidden />
+      </label>
+    ) : (
+      <img className="w-36 rounded" src={userData.image} alt="" />
+    )}
 
-      {
-        isEdit ? <label htmlFor="image">
-          <div className="inline-block relative cursor-pointer">
-            <img className="w-36 rounded opacity-75" src={image ? URL.createObjectURL(image):userData.image} alt="" />
-            <img className="absolute w-10 right-12 bottom-12" src={image ? '':assets.upload_icon} alt="" />
-          </div>
-          <input onChange={(e) => setImage(e.target.files[0])} type="file" id="image" hidden />
-        </label>
-        : <img className="w-36 rounded" src={userData.image} alt="" />
-      }
-
-      {
-        isEdit ? <input className="bg-gray-50 text-3xl font-medium max-w-60 mt-4" type="text" value={userData.name} onChange={(e) => setUserData(prev=> ({...prev, name:e.target.value}))} />
-        : <p className="font-medium text-3xl text-neutral-800 mt-4">
-          {userData.name}
-        </p>
-      }
+    {isEdit ? (
+      <input
+        className="bg-gray-50 text-3xl font-medium max-w-60 mt-4"
+        type="text"
+        value={userData.name}
+        onChange={(e) => setUserData((prev) => ({ ...prev, name: e.target.value }))}
+      />
+    ) : (
+      <p className="font-medium text-3xl text-neutral-800 mt-4">{userData.name}</p>
+    )}
       <hr className="bg-zinc-400 h-[1px] border-none" />
       <div>
         <p className="text-neutral-500 underline mt-3">CONTACT INFORMATION</p>

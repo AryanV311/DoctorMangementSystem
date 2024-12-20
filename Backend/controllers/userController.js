@@ -4,6 +4,7 @@ import userModel from '../models/userModel.js';
 import jwt from "jsonwebtoken"
 
 import {v2 as cloudinary} from "cloudinary"
+import doctorModel from '../models/doctorModel.js';
 
 //*register user
 const registerUser = async(req,res) => {
@@ -109,4 +110,59 @@ const updateProfile = async(req,res) => {
     }
 }
 
-export { registerUser, loginUser, getProfile, updateProfile }
+//* API to book Appointment
+const bookAppointment = async(req,res) => {
+    try {
+        const {docId, userId, slotDate, slotTime} = req.body
+        console.log(userId);
+        
+        const docData = await doctorModel.findById(docId).select('-password')
+
+        if(!docData.available){
+            res.json({success:false, message:"Doctor not available"})
+        }
+
+        let slots_booked = docData.slots_booked
+
+        //checing for slot available
+        if(slots_booked[slotDate]){
+            if(slots_booked[slotDate].includes(slotTime)) {
+                res.json({success:false, message:"slot not available"})
+            } else {
+                slots_booked[slotDate].push(slotTime)
+            }
+        } else {
+            let slots_booked = []
+            slots_booked[slotDate].push(slotTime)
+        }
+
+        const userData = await userModel.findById(userId).select('-password')
+        console.log(userData);
+
+        delete docData.slots_booked
+
+        const appointmentData = {
+            userId,
+            docId,
+            userData,
+            docData,
+            amount:docData.fees,
+            slotDate,
+            slotTime,
+            date:Date.now()
+        }
+
+        const newAppointment = new appointmentModel(appointmentData)
+
+        await newAppointment.save()
+
+        //save new slot datat in docData
+
+        await doctorModel.findByIdAndUpdate(docId,{slots_booked})
+        res.json({success:true, message:"Appointment Booked"})
+    } catch (error) {
+        
+    }
+}
+
+export { registerUser, loginUser, getProfile, updateProfile,bookAppointment }
