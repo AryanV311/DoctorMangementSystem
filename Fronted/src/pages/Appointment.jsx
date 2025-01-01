@@ -8,7 +8,7 @@ import axios from "axios";
 
 export const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, currencySymbol,backendUrl, getDoctorsData,token } = useContext(AppContext);
+  const { doctors, currencySymbol,backendUrl, getDoctorsData,token, userData } = useContext(AppContext);
 
   const [docInfo, setDocInfo] = useState(null);
   const [docSlots, setDocSlots] = useState([]);
@@ -71,7 +71,9 @@ export const Appointment = () => {
   const bookAppointment = async() => {
     if(!token){
       toast.warn("Login to book Appointment")
+      console.log("login please");
       return navigate("/login")
+      
     }
     try {
         let date = docSlots[slotIndex][0].datetime
@@ -80,14 +82,21 @@ export const Appointment = () => {
         let month = date.getMonth() + 1
         let year = date.getFullYear()
 
-        const slotDate = day + "_" + month + "_" + year
+        console.log("docId", docId);
         
-        const { data } = await axios.post(backendUrl + "/api/user/book-appointment", {docId,slotDate,slotTime}, {headers:{token}})
-        console.log(data);
+        const userId = userData._id
+        console.log("object",userId);
+
+        const slotDate = day + "_" + month + "_" + year
+        console.log("slotDAte", slotDate);
+        console.log("slotDAte", slotTime);
+        console.log("token",token);
+        const { data } = await axios.post(backendUrl + '/api/user/book-appointment', {docId,slotDate,slotTime}, {headers:{token}})
+        console.log("data___",data);
         if(data.success){
           toast.success(data.message)
           getDoctorsData()
-          navigate("/my-appointment")
+          navigate("/my-appointments")
 
         } else {
           toast.error(data.message)
