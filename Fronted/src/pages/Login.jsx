@@ -113,12 +113,12 @@ export const Login = () => {
             </p>
           ) : (
             <p>
-              Create an account?{" "}
+              Create an account?
               <span
                 onClick={() => setState("Sign up")}
                 className="text-primary underline cursor-pointer"
               >
-                click here{" "}
+                click here
               </span>
             </p>
           )}
