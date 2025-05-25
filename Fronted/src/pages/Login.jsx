@@ -59,7 +59,7 @@ export const Login = () => {
     <>
       <form
         onSubmit={onSubmithandler}
-        className="min-h-[80vh] flex items-center"
+        className="min-h-[80vh] flex items-center border"
       >
         <div className="flex flex-col gap-3 m-auto item-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-zinc-600 text-sm shadow-lg">
           <p className="text-2xl font-semibold">
@@ -105,7 +105,7 @@ export const Login = () => {
             <p>
               Already have an account?{" "}
               <span
-                onClick={() => setState("Login")}
+                onClick={() => setState("Login")} 
                 className="text-primary underline cursor-pointer"
               >
                 Login here

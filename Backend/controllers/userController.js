@@ -2,9 +2,9 @@ import validator from 'validator';
 import bcrypt from "bcrypt";
 import userModel from '../models/userModel.js';
 import jwt from "jsonwebtoken"
-
 import {v2 as cloudinary} from "cloudinary"
 import doctorModel from '../models/doctorModel.js';
+import appointmentModel from "../models/appointmentModel.js"
 
 //*register user
 const registerUser = async(req,res) => {
@@ -118,6 +118,10 @@ const bookAppointment = async(req,res) => {
         
         const docData = await doctorModel.findById(docId).select('-password')
 
+        if (!docData) {
+            return res.json({ success: false, message: "Doctor not found" });
+        }
+
         if(!docData.available){
             res.json({success:false, message:"Doctor not available"})
         }
@@ -132,7 +136,7 @@ const bookAppointment = async(req,res) => {
                 slots_booked[slotDate].push(slotTime)
             }
         } else {
-            let slots_booked = []
+            slots_booked[slotDate] = []
             slots_booked[slotDate].push(slotTime)
         }
 
@@ -161,8 +165,22 @@ const bookAppointment = async(req,res) => {
         await doctorModel.findByIdAndUpdate(docId,{slots_booked})
         res.json({success:true, message:"Appointment Booked"})
     } catch (error) {
-        
+        console.log(error);
+        res.json({success:false, message:error.message})
     }
 }
 
-export { registerUser, loginUser, getProfile, updateProfile,bookAppointment }
+const listAppointment = async() => {
+    try {
+        const {userId} = req.body
+        const appointments = await appointmentModel.find({userId})
+
+        res.json({success:true, appointments})
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false, message:error.message})
+    }
+}
+
+export { registerUser, loginUser, getProfile, updateProfile,bookAppointment, listAppointment }

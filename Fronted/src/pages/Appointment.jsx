@@ -53,11 +53,25 @@ export const Appointment = () => {
       while(currentDate < endTime){
         let formattedTime = currentDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit"});
 
-        // add slot to array
+
+        let day = currentDate.getDate()
+        let month = currentDate.getMonth() + 1
+        let year = currentDate.getFullYear()
+
+        const slotDate = day + "_" + month + "_" + year
+        const slotTime = formattedTime
+
+        const isSlotAvailable = docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true
+
+        if(isSlotAvailable){
+          // add slot to array
         timeSlots.push({
           datetime: new Date(currentDate),
           time: formattedTime
         })
+        }
+
+        
 
         // Increment current times by 30 minutes
         currentDate.setMinutes(currentDate.getMinutes() + 30)
@@ -88,10 +102,9 @@ export const Appointment = () => {
         console.log("object",userId);
 
         const slotDate = day + "_" + month + "_" + year
-        console.log("slotDAte", slotDate);
-        console.log("slotDAte", slotTime);
-        console.log("token",token);
-        const { data } = await axios.post(backendUrl + '/api/user/book-appointment', {docId,slotDate,slotTime}, {headers:{token}})
+       
+
+        const {data}  = await axios.post(backendUrl + '/api/user/book-appointment', {docId,slotDate,slotTime}, {headers:{token}})
         console.log("data___",data);
         if(data.success){
           toast.success(data.message)
